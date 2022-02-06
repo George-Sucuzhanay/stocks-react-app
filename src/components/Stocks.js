@@ -1,9 +1,29 @@
-import { useState, useEffect } from "react"
+import { useState, useEffect } from "react";
+import { api_call } from "../services/api_call";
+import Stock from "./Stock";
 
-export default function Stocks(){
+function Stocks(){
+    const [stocks, setStocks] = useState([]);
+
+    useEffect(() =>{
+        const fetchData = async() => {
+            try{
+                const response = await api_call();
+                setStocks(response);
+            } catch(error){
+                console.log(error);
+            }
+        }
+        fetchData()
+    }, [])
+
     return(
         <div>
-            <h1>This is my main div</h1>
+            {(stocks ||  []).map((stock,index) => {
+                const {symbol, companyName, latestPrice, changePercent} = stock
+                return <Stock symbol={symbol} companyName={companyName} latestPrice={latestPrice} changePercent={changePercent} key={index}/>;
+            })}
         </div>
     )
 }
+export default Stocks;
